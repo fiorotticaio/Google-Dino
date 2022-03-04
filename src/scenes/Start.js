@@ -9,12 +9,12 @@ export default class Start extends Phaser.Scene {
 
     preload() {
         /* fazendo o carregamento das imagens */
-        this.load.image('background', './src/sprites/background.png');
-        this.load.image('dino', './src/sprites/dino.png');
-        this.load.image('botaoEspaco', './src/sprites/botaoEspaco.png');
+        this.load.image('background', './src/sprites/backgroundCastles.png');
+        this.load.image('dinoRun', './src/sprites/dinoRun.png');
+        this.load.image('spaceButton', './src/sprites/spaceButton.png');
 
         /* fazendo o carregamento dos sons */
-        this.load.audio('startMusic', './src/sprites/startMusic.mp3');
+        this.load.audio('startMusic', './src/sounds/startMusic.mp3');
     }
 
 
@@ -24,8 +24,8 @@ export default class Start extends Phaser.Scene {
 
         /* adcionando as imagens carregadas */
         this.add.image(512, 512, 'background');
-        this.add.image(200, 650, 'dino').setScale(0.5);
-        this.add.image(width*0.5, (height*0.5)-200, 'botaoEspaco').setScale(1.2); // fazer piscar
+        this.add.image(550, 550, 'dinoRun').setScale(0.5);
+        this.button = this.add.image(width*0.5, (height*0.5)-200, 'spaceButton').setScale(1.2); // fazer piscar
 
         /* adicionando a musica inicial */
         this.sound.play('startMusic');
@@ -35,7 +35,7 @@ export default class Start extends Phaser.Scene {
             fontSize: 48
         };
         /* adicionando a frase na tela */
-        this.add.text(width*0.5, (height*0.5)-300, 'Pressione ESPAÇO para iniciar', style)
+        this.add.text(width*0.5, (height*0.5)-300, 'Press SPACE to play', style)
             .setOrigin(0.5)
         ;
 
@@ -44,5 +44,19 @@ export default class Start extends Phaser.Scene {
             this.sound.stopAll(); // parar a música inicial
             this.scene.start('game');
         })
+
+        /* fazendo o botão diminuir e aumentar de tamanho */
+        setInterval(() => {
+            if(this.button.scale == 1.2) {
+                this.button.setScale(1.5);
+            } else {
+                this.button.setScale(1.2);
+            }
+        }, 400);
+    }
+
+
+    update() {
+     
     }
 }

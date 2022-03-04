@@ -1,1 +1,5 @@
-fazer os spritesheets (animaçõeszinhas)
+- fazer os spritesheets (animaçõeszinhas)
+
+- plataforma infinita
+
+- plataforma se mover e dinossauro ficar parado deslizando
