@@ -6,8 +6,8 @@ import Start from './scenes/Start.js'
 
 export default new Phaser.Game({
     type: Phaser.AUTO,
-    width: 1024,
-    height: 1024,
+    width: 1000,
+    height: 500,
     scene: [Start, Game],
     physics: {
         default: 'arcade',

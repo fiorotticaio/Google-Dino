@@ -1,46 +1,42 @@
 import Phaser from '../lib/phaser.js'
 
-
 export default class Game extends Phaser.Scene {
 
     constructor() {
         super('game');
     }
 
-
     init() {
-        this.pontuacao = 0
+        this.score = 0;
     }
-
 
     preload() {
         /* fazendo o carregamento das imagens */
-        this.load.image('background', './src/sprites/background.png');
-        this.load.image('dino', './src/sprites/dino.png');
+        this.load.image('background', './src/sprites/images/background2.png');
+        this.load.image('dino', './src/sprites/images/dino.png');
     }
     
-
     create() {
+
+        const style = { color: '#000', fontSize: 24 };
+
         /* adcionando as imagens carregadas */
-        this.add.image(512, 512, 'background');
-        this.add.image(200, 650, 'dino').setScale(0.5);
+        this.add.image(500, 250, 'background');
+        this.add.image(200, 350, 'dino').setScale(0.3);
 
         /* texto da pontuação */
-        const style = { color: '#000', fontSize: 24 };
-        this.textoPontuacao = this.add.text(800, 10, 'Pontuação: 0', style)
+        this.scoreText = this.add.text(800, 50, 'Pontuação: 0', style)
             .setScrollFactor(0)
-            .setOrigin(0.5, 0)
-        ;
+            .setOrigin(0.5, 0);       
     }
 
-    
     update() {
-        this.handlePontuacao();
+
+        this.updateScore();
     }
 
-
-    handlePontuacao() {
-        this.pontuacao++;
-        this.textoPontuacao.text = `Pontuação: ${this.pontuacao}`;
+    updateScore() {
+        this.score++;
+        this.scoreText.text = `Pontuação: ${this.pontuacao}`;
     }
 }
