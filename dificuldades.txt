@@ -1,5 +1,9 @@
-- fazer os spritesheets (animaçõeszinhas)
+- [ ] fazer os spritesheets (animação)
 
-- plataforma infinita
+- [ ] plataforma infinita
 
-- plataforma se mover e dinossauro ficar parado deslizando
+- [x] plataforma se mover e dinossauro ficar parado deslizando
+
+- [ ] dinossauro caindo quando agacha na plataforma
+
+- [x] fundo não se move quando o dinossauro está sobre a plataforma
