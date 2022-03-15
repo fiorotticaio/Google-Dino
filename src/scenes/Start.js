@@ -23,8 +23,8 @@ export default class Start extends Phaser.Scene {
         const height = this.scale.height; // altura do jogo
 
         /* adcionando as imagens carregadas */
-        this.add.image(512, 512, 'background');
-        this.add.image(550, 550, 'dinoRun').setScale(0.5);
+        this.background = this.add.tileSprite(850, 512, width, height, 'background').setScrollFactor(0, 0)
+        this.add.image(900, 550, 'dinoRun').setScale(0.5);
         this.button = this.add.image(width*0.5, (height*0.5)-200, 'spaceButton').setScale(1.2); // fazer piscar
 
         /* adicionando a musica inicial */
@@ -36,8 +36,7 @@ export default class Start extends Phaser.Scene {
         };
         /* adicionando a frase na tela */
         this.add.text(width*0.5, (height*0.5)-300, 'Press SPACE to play', style)
-            .setOrigin(0.5)
-        ;
+            .setOrigin(0.5);
 
         /* se apertar espaço inicia a cena principal (Game) */
         this.input.keyboard.once('keydown-SPACE', () => {
@@ -53,10 +52,5 @@ export default class Start extends Phaser.Scene {
                 this.button.setScale(1.2);
             }
         }, 400);
-    }
-
-
-    update() {
-     
     }
 }

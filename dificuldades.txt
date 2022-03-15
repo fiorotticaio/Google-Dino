@@ -1,9 +1,11 @@
 - [ ] fazer os spritesheets (animação)
 
-- [ ] plataforma infinita
+- [x] plataforma infinita 
+    -> tilesprite
 
 - [x] plataforma se mover e dinossauro ficar parado deslizando
 
 - [ ] dinossauro caindo quando agacha na plataforma
+    -> cortar todas as imagens com a mesma altura 
 
 - [x] fundo não se move quando o dinossauro está sobre a plataforma

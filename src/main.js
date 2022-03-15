@@ -6,7 +6,7 @@ import Start from './scenes/Start.js'
 
 export default new Phaser.Game({
     type: Phaser.AUTO,
-    width: 1024,
+    width: 1700,
     height: 1024,
     scene: [Start, Game],
     physics: {
