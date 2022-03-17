@@ -18,23 +18,19 @@ export default class Game extends Phaser.Scene {
     preload() {
         /* loading images */
         this.load.image('background', './src/sprites/backgroundCastles.png');
-        this.load.image('dino', './src/sprites/dino.png');
-        this.load.image('dinoJump', './src/sprites/dinoJump.png');
-        this.load.image('dinoDown', './src/sprites/Dead.png');
         this.load.image('platform', './src/sprites/platform.png');
         this.load.image('cactus', './src/sprites/cactus.png');
         this.load.image('cloud', './src/sprites/cloud.png');
         
-
         /* loading spritesheet */
-        // * fazer daquele jeito do star cacther 
-        // * no spritesheet.png são 8 correndo - 4 pulando - 4 caindo - 4 abaixando */
-        // this.load.spritesheet('dino2', './src/sprites/running.png', {
-        //     frameWidth: 430,
-        //     frameHeight: 436
-        // });
+        this.load.spritesheet('dino', './src/sprites/spritesheet.png', {
+            frameWidth: 430,
+            frameHeight: 436
+        });
 
-        
+        /* loading audios */
+        this.load.audio('jump', './src/sounds/jump.mp3');
+
         /* including cursors */
         this.cursors = this.input.keyboard.createCursorKeys();
     }
@@ -48,22 +44,45 @@ export default class Game extends Phaser.Scene {
 
         /* adding the platform */
         this.platform = this.add.tileSprite(850, 870, 1700, 106, 'platform').setScrollFactor(0, 0);
-        
+        this.physics.add.existing(this.platform, true);
+    
         
         /* adding dino (spritesheet ) */
-        // this.dino2 = this.add.sprite(200, 400, 'dino2');        
-        // this.anims.create({
-        //     key: 'dino2_anim',
-        //     frames: 8,
-        //     frameRate: 20,
-        //     repeat: -1
-        // });
-        // this.dino2.play('dino2_anim');
+        this.dino = this.physics.add.sprite(200, 400, 'dino').setScale(0.5);
 
-        /* adding normal dino */
-        this.dino = this.physics.add.sprite(200, 600, 'dino').setScale(0.5);
+        this.anims.create({
+            key: 'run',
+            frames: this.anims.generateFrameNumbers('dino', { start: 0, end: 8 }),
+            frameRate: 20,
+            repeat: -1
+        });
 
-        // this.cameras.main.startFollow(this.dino);
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNumbers('dino', { start: 9, end: 12 }),
+            frameRate: 20,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'fall',
+            frames: this.anims.generateFrameNumbers('dino', { start: 13, end: 16 }),
+            frameRate: 20,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'getDown',
+            frames: this.anims.generateFrameNumbers('dino', { start: 17, end: 20 }),
+            frameRate: 20,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'stop',
+            frames: [ { key: 'dino', frame: 0 } ],
+            frameRate: 20,
+        });
 
     
         /* group with all active obstacles */
@@ -85,7 +104,10 @@ export default class Game extends Phaser.Scene {
         /* adding a platform to the game, the arguments are platform width and x position */
         this.addObstacle(100, this.gameWidth / 2);
         
-        this.physics.add.collider(this.dino, this.platform, this.obstacleGroup);
+        /* adding collisions */
+        this.physics.add.collider(this.dino, this.platform);
+        this.physics.add.collider(this.dino, this.obstacleGroup);
+        // this.physics.add.overlap(this.dino, this.obstacleGroup, this.finishGame(this.pontuation), undefined, this);
 
 
         /* the text of the pontuation */
@@ -96,26 +118,48 @@ export default class Game extends Phaser.Scene {
     }
 
     
-    update() {
+    update(time) {
         /* "moving" the background */
-        this.background.tilePositionX = this.cameras.main.scrollX * 1;
+        this.background.tilePositionX = time * 0.3;
 
         /* "moving" the platform */
-        this.platform.tilePositionX = this.cameras.main.scrollX * 2;
+        this.platform.tilePositionX = time * 0.4;
 
-        this.dino.setVelocityX(50); // não vai precisar (apenas vai rodar a animação e dar a impressao de estar correndo)
-        this.dino.setImmovable(true);
-        this.dino.body.setAllowGravity(false);
+        /* handling spritesheet */
+        if (this.cursors.up.isDown && this.dino.body.touching.down) {
+            this.dino.anims.play('jump', true);
+            this.dino.setVelocityY(-700);
+            this.sound.play('jump');
+            
+        } else if (this.dino.body.velocity.y <= 0 && !this.dino.body.touching.down) {
+            this.dino.anims.play('fall', true);
+            
+        } else if (this.cursors.down.isDown) {
+            this.dino.anims.play('getDown', true);
+            
+        } else if (this.dino.body.touching.down) {
+            this.dino.anims.play('run', true);
+        }
 
-  
+
         // recycling obstacles
         let minDistance = this.gameWidth;
         this.obstacleGroup.getChildren().forEach(function(obstacle) {
+            /* checking if the obstacle can be destroyed  */
             let obstacleDistance = this.gameWidth - obstacle.x - obstacle.displayWidth / 2;
             minDistance = Math.min(minDistance, obstacleDistance);
             if(obstacle.x < - obstacle.displayWidth / 2){
                 this.obstacleGroup.killAndHide(obstacle);
                 this.obstacleGroup.remove(obstacle);
+            }
+
+            /* checking if dino collided with some obstacle */
+            if (this.dino.body.touching.up) {
+                this.finishGame(this.pontuation);
+            } else if (this.dino.body.touching.right) {
+                this.finishGame(this.pontuation);
+            } else if (this.dino.body.touching.down && obstacle.body.touching.up) {
+                this.finishGame(this.pontuation);
             }
         }, this);
  
@@ -138,7 +182,6 @@ export default class Game extends Phaser.Scene {
 
     addObstacle(obstacleWidth, posX){
         let obstacle;
-        console.log()
         if(this.obstaclePool.getLength()) { // already have obstacles
             obstacle = this.obstaclePool.getFirst();
             obstacle.x = posX;
@@ -149,25 +192,32 @@ export default class Game extends Phaser.Scene {
         } else { // frist obstacle
 
             let typeOfObstacle = Phaser.Math.Between(1, 2); // chose randomly a type of obstacle to add
-            console.log(typeOfObstacle); 
+            console.log(typeOfObstacle);
 
             if (typeOfObstacle == 1) {
                 obstacle = this.physics.add.sprite(posX, 750, 'cactus');
                 obstacle.setImmovable(true);
                 obstacle.body.setAllowGravity(false);
-                obstacle.setVelocityX(-200);
+                obstacle.setVelocityX(-500);
                 this.obstacleGroup.add(obstacle);
 
             } else if (typeOfObstacle == 2) {
                 obstacle = this.physics.add.sprite(posX, 500, 'cloud');
                 obstacle.setImmovable(true);
                 obstacle.body.setAllowGravity(false);
-                obstacle.setVelocityX(-200);
+                obstacle.setVelocityX(-500);
                 this.obstacleGroup.add(obstacle);
             }
 
         }
         obstacle.displayWidth = obstacleWidth;
         this.nextObstacleDistance = Phaser.Math.Between(700, 1000);
+    }
+
+
+    finishGame(pts) {
+        this.dino.anims.play('getDown', true);
+        this.sound.stopAll(); // stop music
+        this.scene.start('gameOver', {pts: pts});
     }
 }
