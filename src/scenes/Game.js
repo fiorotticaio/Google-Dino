@@ -8,7 +8,6 @@ export default class Game extends Phaser.Scene {
     }
 
     
-    
     init() {
         this.pontuation = 0;
         this.gameWidth = 1700;
