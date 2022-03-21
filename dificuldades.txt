@@ -1,6 +1,5 @@
-- [ ] fazer o spritesheet do dino (ainda apresenta problemas)
-
-- [ ] animação quando morre
+- [x] fazer o spritesheet do dino
+    -> separação com grid no gimp
 
 - [x] plataforma infinita 
     -> tilesprite

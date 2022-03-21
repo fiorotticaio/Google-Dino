@@ -20,15 +20,16 @@ export default class Game extends Phaser.Scene {
         this.load.image('platform', './src/sprites/platform.png');
         this.load.image('cactus', './src/sprites/cactus.png');
         this.load.image('cloud', './src/sprites/cloud.png');
+        this.load.image('bird', './src/sprites/bird.png');
         
         /* loading spritesheet */
         this.load.spritesheet('dino', './src/sprites/spritesheet.png', {
-            frameWidth: 430,
-            frameHeight: 436
+            frameWidth: 460,
+            frameHeight: 410
         });
 
         /* loading audios */
-        this.load.audio('jump', './src/sounds/jump.mp3');
+        this.load.audio('jumpAudio', './src/sounds/jump.mp3');
 
         /* including cursors */
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -47,41 +48,44 @@ export default class Game extends Phaser.Scene {
     
         
         /* adding dino (spritesheet ) */
-        this.dino = this.physics.add.sprite(200, 400, 'dino').setScale(0.5);
+        this.dino = this.physics.add.sprite(200, 700, 'dino').setScale(0.5); 
 
         this.anims.create({
             key: 'run',
-            frames: this.anims.generateFrameNumbers('dino', { start: 0, end: 8 }),
-            frameRate: 20,
+            frames: this.anims.generateFrameNumbers('dino', { start: 0, end: 7 }),
+            frameRate: 15,
             repeat: -1
         });
 
+        // this.anims.create({
+        //     key: 'jump',
+        //     frames: this.anims.generateFrameNumbers('dino', { start: 8, end: 15 }),
+        //     frameRate: 15,
+        //     repeat: 1
+        // });
+
+        // this.anims.create({
+        //     key: 'getDown',
+        //     frames: this.anims.generateFrameNumbers('dino', { start: 16, end: 19 }),
+        //     frameRate: 15,
+        //     repeat: 1
+        // });
+
+        /* division of frames for spritesheet2.png */
         this.anims.create({
             key: 'jump',
-            frames: this.anims.generateFrameNumbers('dino', { start: 9, end: 12 }),
-            frameRate: 20,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'fall',
-            frames: this.anims.generateFrameNumbers('dino', { start: 13, end: 16 }),
-            frameRate: 20,
-            repeat: -1
+            frames: this.anims.generateFrameNumbers('dino', { start: 8, end: 19 }),
+            frameRate: 10,
+            repeat: 1
         });
 
         this.anims.create({
             key: 'getDown',
-            frames: this.anims.generateFrameNumbers('dino', { start: 17, end: 20 }),
-            frameRate: 20,
-            repeat: -1
+            frames: this.anims.generateFrameNumbers('dino', { start: 20, end: 27 }),
+            frameRate: 10,
+            repeat: 1
         });
 
-        this.anims.create({
-            key: 'stop',
-            frames: [ { key: 'dino', frame: 0 } ],
-            frameRate: 20,
-        });
 
     
         /* group with all active obstacles */
@@ -92,7 +96,7 @@ export default class Game extends Phaser.Scene {
             }
         });
         
-        /* pool */
+        /* pool of obstacles */
         this.obstaclePool = this.add.group({
             // once a platform is removed from the pool, it's added to the active platforms group
             removeCallback: function(obstacle) {
@@ -101,16 +105,15 @@ export default class Game extends Phaser.Scene {
         });
         
         /* adding a platform to the game, the arguments are platform width and x position */
-        this.addObstacle(100, this.gameWidth / 2);
+        this.addObstacle(150, this.gameWidth / 2);
         
         /* adding collisions */
         this.physics.add.collider(this.dino, this.platform);
         this.physics.add.collider(this.dino, this.obstacleGroup);
-        // this.physics.add.overlap(this.dino, this.obstacleGroup, this.finishGame(this.pontuation), undefined, this);
 
 
         /* the text of the pontuation */
-        const style = { color: '#000', fontSize: 24 };
+        const style = { color: '#000', fontSize: 40 };
         this.textPontuation = this.add.text(800, 10, 'Pontuation: 0', style)
             .setScrollFactor(0)
             .setOrigin(0.5, 0);
@@ -126,17 +129,17 @@ export default class Game extends Phaser.Scene {
 
         /* handling spritesheet */
         if (this.cursors.up.isDown && this.dino.body.touching.down) {
-            this.dino.anims.play('jump', true);
+            this.dino.setScale(0.5);
+            this.dino.anims.play('jump');
             this.dino.setVelocityY(-700);
-            this.sound.play('jump');
-            
-        } else if (this.dino.body.velocity.y <= 0 && !this.dino.body.touching.down) {
-            this.dino.anims.play('fall', true);
+            this.sound.play('jumpAudio');
             
         } else if (this.cursors.down.isDown) {
             this.dino.anims.play('getDown', true);
+            this.dino.setScale(0.49); // so he can scape from the bird
             
         } else if (this.dino.body.touching.down) {
+            this.dino.setScale(0.5);
             this.dino.anims.play('run', true);
         }
 
@@ -165,7 +168,7 @@ export default class Game extends Phaser.Scene {
         // adding new obstacles
         if(minDistance > this.nextObstacleDistance){
             let nextObstacleWidth = 100;
-            this.addObstacle(100, this.gameWidth + nextObstacleWidth / 2);
+            this.addObstacle(150, this.gameWidth + nextObstacleWidth / 2);
         }
 
 
@@ -199,17 +202,20 @@ export default class Game extends Phaser.Scene {
                 obstacle.body.setAllowGravity(false);
                 obstacle.setVelocityX(-500);
                 this.obstacleGroup.add(obstacle);
+                obstacle.displayWidth = 100;
+
 
             } else if (typeOfObstacle == 2) {
-                obstacle = this.physics.add.sprite(posX, 500, 'cloud');
+                obstacle = this.physics.add.sprite(posX, 527, 'bird').setScale(0.3);
                 obstacle.setImmovable(true);
                 obstacle.body.setAllowGravity(false);
                 obstacle.setVelocityX(-500);
                 this.obstacleGroup.add(obstacle);
+                obstacle.displayWidth = 200;
+
             }
 
         }
-        obstacle.displayWidth = obstacleWidth;
         this.nextObstacleDistance = Phaser.Math.Between(700, 1000);
     }
 
