@@ -50,6 +50,7 @@ export default class Game extends Phaser.Scene {
         /* adding dino (spritesheet ) */
         this.dino = this.physics.add.sprite(200, 700, 'dino').setScale(0.5); 
 
+        /* creating dino animations */
         this.anims.create({
             key: 'run',
             frames: this.anims.generateFrameNumbers('dino', { start: 0, end: 7 }),
@@ -57,21 +58,6 @@ export default class Game extends Phaser.Scene {
             repeat: -1
         });
 
-        // this.anims.create({
-        //     key: 'jump',
-        //     frames: this.anims.generateFrameNumbers('dino', { start: 8, end: 15 }),
-        //     frameRate: 15,
-        //     repeat: 1
-        // });
-
-        // this.anims.create({
-        //     key: 'getDown',
-        //     frames: this.anims.generateFrameNumbers('dino', { start: 16, end: 19 }),
-        //     frameRate: 15,
-        //     repeat: 1
-        // });
-
-        /* division of frames for spritesheet2.png */
         this.anims.create({
             key: 'jump',
             frames: this.anims.generateFrameNumbers('dino', { start: 8, end: 19 }),
