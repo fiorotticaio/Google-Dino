@@ -170,14 +170,14 @@ export default class Game extends Phaser.Scene {
 
     addObstacle(obstacleWidth, posX){
         let obstacle;
-        if(this.obstaclePool.getLength()) { // already have obstacles
+        if(this.obstaclePool.getLength()) { // if have obstacles in the pool
             obstacle = this.obstaclePool.getFirst();
             obstacle.x = posX;
             obstacle.active = true;
             obstacle.visible = true;
             this.obstaclePool.remove(obstacle);
 
-        } else { // frist obstacle
+        } else { 
 
             let typeOfObstacle = Phaser.Math.Between(1, 2); // chose randomly a type of obstacle to add
             console.log(typeOfObstacle);
