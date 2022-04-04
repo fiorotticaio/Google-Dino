@@ -155,7 +155,7 @@ export default class Game extends Phaser.Scene {
         if(minDistance > this.nextObstacleDistance){
             let nextObstacleWidth = 100;
             this.addObstacle(150, this.gameWidth + nextObstacleWidth / 2);
-        }
+        }   
 
 
         this.handlePontuation();
